@@ -12,10 +12,22 @@ export interface SaturationProps extends Omit<React.HTMLAttributes<HTMLDivElemen
   /** React Component, Custom pointer component */
   pointer?: ({ prefixCls, left, top, color }: PointerProps) => JSX.Element;
   onChange?: (newColor: HsvaColor) => void;
+  rotation?: number;
 }
 
 const Saturation = React.forwardRef<HTMLDivElement, SaturationProps>((props, ref) => {
-  const { prefixCls = 'w-color-saturation', radius = 0, pointer, className, hue = 0, style, hsva, onChange, ...other } = props;
+  const {
+    prefixCls = 'w-color-saturation',
+    radius = 0,
+    pointer,
+    className,
+    hue = 0,
+    style,
+    hsva,
+    onChange,
+    rotation,
+    ...other
+  } = props;
   const containerStyle: React.CSSProperties = {
     width: 200,
     height: 200,
@@ -29,8 +41,28 @@ const Saturation = React.forwardRef<HTMLDivElement, SaturationProps>((props, ref
       hsva &&
       onChange({
         h: hsva.h,
-        s: interaction.left * 100,
-        v: (1 - interaction.top) * 100,
+        s:
+          rotation === 1
+            ? interaction.left * 100
+            : rotation === 2
+              ? interaction.top * 100
+              : rotation === 3
+                ? (1 - interaction.left) * 100
+                : rotation === 4
+                  ? (1 - interaction.top) * 100
+                  : hsva.s,
+        // s: interaction.left * 100,
+        v:
+          rotation === 1
+            ? (1 - interaction.top) * 100
+            : rotation === 2
+              ? interaction.left * 100
+              : rotation === 3
+                ? interaction.top * 100
+                : rotation === 4
+                  ? (1 - interaction.left) * 100
+                  : hsva.v,
+        //v: (1 - interaction.top) * 100,
         a: hsva.a,
         // source: 'hsv',
       });

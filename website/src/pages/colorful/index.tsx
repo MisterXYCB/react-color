@@ -7,13 +7,14 @@ function Example() {
   const { hsva, dispatch } = useContext(Context);
   const [disableAlpha, setDisableAlpha] = useState(false);
   return (
-    <div style={{ width: 256 }}>
+    <div style={{ width: 256, rotate: '180deg' }}>
       <Colorful
         color={hsva}
         disableAlpha={disableAlpha}
         onChange={(color) => {
           dispatch!({ hsva: { ...hsva, ...color.hsva } });
         }}
+        rotation={180}
       />
       <div>
         <label>

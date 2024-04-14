@@ -17,6 +17,7 @@ export interface ColorfulProps extends Omit<React.HTMLAttributes<HTMLDivElement>
   onChange?: (color: ColorResult) => void;
   color?: string | HsvaColor;
   disableAlpha?: boolean;
+  rotation?: number;
 }
 
 const Pointer = ({ style, color, ...props }: React.HTMLAttributes<HTMLDivElement> & { color: string }) => {
@@ -50,7 +51,8 @@ const Pointer = ({ style, color, ...props }: React.HTMLAttributes<HTMLDivElement
 };
 
 const Colorful = React.forwardRef<HTMLDivElement, ColorfulProps>((props, ref) => {
-  const { prefixCls = 'w-color-colorful', className, onChange, color, style, disableAlpha, ...other } = props;
+  const { prefixCls = 'w-color-colorful', className, onChange, color, style, disableAlpha, rotation = 0, ...other } = props;
+  const rotationDirection = rotation === 0 ? 1 : rotation === 90 ? 2 : rotation === 180 ? 3 : rotation === 270 ? 4 : 1;
   const hsva = (typeof color === 'string' && validHex(color) ? hexToHsva(color) : color || {}) as HsvaColor;
   const handleChange = (value: HsvaColor) => onChange && onChange(handleColor(value));
   return (
@@ -73,6 +75,7 @@ const Colorful = React.forwardRef<HTMLDivElement, ColorfulProps>((props, ref) =>
           <Pointer style={{ left, top, transform: 'translate(-16px, -16px)' }} color={hsvaToHex(hsva)} />
         )}
         onChange={(newColor) => handleChange({ ...hsva, ...newColor })}
+        rotation={rotationDirection}
       />
       <Hue
         hue={hsva.h}
@@ -81,6 +84,7 @@ const Colorful = React.forwardRef<HTMLDivElement, ColorfulProps>((props, ref) =>
         className={prefixCls}
         onChange={(newHue) => handleChange({ ...hsva, ...newHue })}
         pointer={({ left }) => <Pointer style={{ left }} color={`hsl(${hsva.h || 0}deg 100% 50%)`} />}
+        rotation={rotationDirection}
       />
       {!disableAlpha && (
         <Alpha
@@ -90,6 +94,7 @@ const Colorful = React.forwardRef<HTMLDivElement, ColorfulProps>((props, ref) =>
           radius="0 0 8px 8px"
           pointer={({ left }) => <Pointer style={{ left }} color={hsvaToRgbaString(hsva)} />}
           onChange={(newAlpha) => handleChange({ ...hsva, ...newAlpha })}
+          rotation={rotationDirection}
         />
       )}
     </div>

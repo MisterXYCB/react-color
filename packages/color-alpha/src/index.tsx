@@ -27,6 +27,7 @@ export interface AlphaProps extends Omit<React.HTMLAttributes<HTMLDivElement>, '
   /** String Enum, horizontal or vertical. Default `horizontal` */
   direction?: 'vertical' | 'horizontal';
   onChange?: (newAlpha: { a: number }, offset: Interaction) => void;
+  rotation?: number;
 }
 
 export const BACKGROUND_IMG =
@@ -48,11 +49,28 @@ const Alpha = React.forwardRef<HTMLDivElement, AlphaProps>((props, ref) => {
     style,
     onChange,
     pointer,
+    rotation,
     ...other
   } = props;
 
   const handleChange = (offset: Interaction) => {
-    onChange && onChange({ ...hsva, a: direction === 'horizontal' ? offset.left : offset.top }, offset);
+    onChange &&
+      onChange(
+        {
+          ...hsva,
+          a:
+            rotation === 1
+              ? offset.left
+              : rotation === 2
+                ? offset.top
+                : rotation === 3
+                  ? 1 - offset.left
+                  : rotation === 4
+                    ? 1 - offset.top
+                    : 0,
+        },
+        offset,
+      );
   };
 
   const colorTo = hsvaToHslaString(Object.assign({}, hsva, { a: 1 }));
